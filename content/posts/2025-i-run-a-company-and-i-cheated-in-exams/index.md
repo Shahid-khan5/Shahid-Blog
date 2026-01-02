@@ -122,4 +122,3 @@ Not "why didn't you achieve your goals." That's the wrong question.
 Why didn't you do the thing you told yourself you would do, on the day you said you would do it?
 
 That's where it starts.
-s
