@@ -27,6 +27,7 @@
 
 import { execFileSync, execSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -43,7 +44,7 @@ const ASSET_NAME = "cpp-ide.apk";
 // Default APK location is the adjacent maui repo. Override by passing
 // the path, e.g. `node upload-apk.js ./some-other.apk`.
 const DEFAULT_APK =
-    "D:/repos/maui/cpp-ide-android/ide/app/build/outputs/apk/debug/app-debug.apk";
+    "D:/repos/maui/cpp-ide-android/ide/app/build/outputs/apk/sideload/release/app-sideload-release.apk";
 const apkPath = path.resolve(process.argv[2] ?? DEFAULT_APK);
 
 if (!fs.existsSync(apkPath)) {
@@ -116,16 +117,30 @@ function main() {
         console.log(`→ Release ${TAG} already exists`);
     }
 
+    // The asset URL on GitHub Releases is derived from the *filename*
+    // on disk — `gh release upload path#label` only changes the UI
+    // label. Copy the APK to a tempfile named ASSET_NAME so the
+    // upload produces the URL we expect (…/cpp-ide.apk) regardless
+    // of the source filename (e.g. app-debug.apk).
+    const stagedDir = fs.mkdtempSync(path.join(os.tmpdir(), "apk-"));
+    const stagedPath = path.join(stagedDir, ASSET_NAME);
+    fs.copyFileSync(apkPath, stagedPath);
+    console.log(`→ Staged as ${stagedPath}`);
+
+    // Best-effort cleanup of a mismatched asset left over from an
+    // earlier run (when this script uploaded as `app-debug.apk`). The
+    // `--clobber` flag only replaces an asset with the *same* name,
+    // so we have to ask explicitly.
+    ghSafe([
+        "release", "delete-asset", TAG,
+        path.basename(apkPath), "-R", REPO, "--yes",
+    ]);
+
     // `gh release upload --clobber` replaces the asset in place if
     // one with the same filename exists, so the public URL is stable
-    // across releases. Without `--clobber`, the second run would
-    // error out and we'd have two .apk files on the release page.
+    // across runs.
     console.log("→ Uploading asset (this can take a minute or two)…");
-    // Pass the path with an explicit display name via `file#display`
-    // so the asset is always `cpp-ide.apk` regardless of the source
-    // filename being `app-debug.apk`.
-    const assetSpec = `${apkPath}#${ASSET_NAME}`;
-    gh(["release", "upload", TAG, assetSpec, "-R", REPO, "--clobber"]);
+    gh(["release", "upload", TAG, stagedPath, "-R", REPO, "--clobber"]);
 
     const url = `https://github.com/${REPO}/releases/download/${TAG}/${ASSET_NAME}`;
     console.log("");
