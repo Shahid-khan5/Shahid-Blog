@@ -1,0 +1,13 @@
+{
+  "name": "upload-apk",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Pushes the cpp-ide APK to UploadThing and updates the download link.",
+  "scripts": {
+    "upload": "node upload-apk.js"
+  },
+  "dependencies": {
+    "uploadthing": "^7.4.0"
+  }
+}
