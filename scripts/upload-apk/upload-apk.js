@@ -135,7 +135,8 @@ function main() {
     console.log("");
     console.log("Markdown snippet for content/cpp-ide.md:");
     console.log(
-        `<a href="${url}" style="display:inline-block;padding:14px 32px;` +
+        `<a href="${url}" download="${ASSET_NAME}" ` +
+            `style="display:inline-block;padding:14px 32px;` +
             `background:#007ACC;color:#fff;border-radius:8px;text-decoration:none;` +
             `font-weight:600;font-size:1.1em;margin:16px 0;">Download APK</a>`,
     );
