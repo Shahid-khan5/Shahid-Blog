@@ -17,7 +17,7 @@
  *
  * We use a stable tag (`apk-latest`) and overwrite its asset via
  * `gh release upload --clobber` on every run, so the URL embedded
- * in content/cpp-ide.md never changes across rebuilds.
+ * in src/content/pages/cpp-ide.md never changes across rebuilds.
  */
 
 import { execFileSync, execSync, spawn } from "node:child_process";
@@ -186,7 +186,7 @@ function uploadApk() {
     console.log(`Public URL: ${url}`);
     console.log(`Size:       ${sizeMB} MB`);
     console.log("");
-    console.log("Markdown snippet for content/cpp-ide.md:");
+    console.log("Markdown snippet for src/content/pages/cpp-ide.md:");
     console.log(
         `<a href="${url}" download="${ASSET_NAME}" ` +
             `style="display:inline-block;padding:14px 32px;` +
@@ -195,7 +195,7 @@ function uploadApk() {
     );
 
     // Persist the URL so a follow-up script or CI step can substitute
-    // it into content/cpp-ide.md without parsing stdout.
+    // it into src/content/pages/cpp-ide.md without parsing stdout.
     const repoRoot = path.resolve(__dirname, "..", "..");
     const outFile = path.join(repoRoot, ".apk-url.txt");
     fs.writeFileSync(outFile, url + "\n");

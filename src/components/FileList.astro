@@ -1,0 +1,73 @@
+---
+interface Props {
+  files: { url: string; title: string; type?: string; description?: string; size?: string }[];
+}
+const { files } = Astro.props;
+---
+
+<ul class="files">
+  {
+    files.map((f) => (
+      <li>
+        <a href={f.url} target="_blank" rel="noopener noreferrer">
+          <span class="mono type">{f.type ?? 'file'}</span>
+          <span class="title">{f.title}</span>
+          {(f.description || f.size) && (
+            <span class="desc">
+              {f.description}
+              {f.size && <span class="mono size"> {f.size}</span>}
+            </span>
+          )}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .files {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 0 1rem;
+    padding: 0.6rem 0;
+    text-decoration: none;
+  }
+
+  .type {
+    grid-row: span 2;
+    align-self: start;
+    justify-self: start;
+    margin-top: 0.3rem;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+
+  .title {
+    transition: color 160ms ease;
+  }
+
+  .desc {
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .size {
+    color: var(--faint);
+    font-size: 0.72rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover .title {
+      color: var(--accent);
+    }
+  }
+</style>

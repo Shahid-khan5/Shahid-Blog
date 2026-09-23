@@ -1,0 +1,238 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import PostList from '../components/PostList.astro';
+import { LINKS, SITE } from '../consts';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Base>
+  <section class="intro">
+    <p class="hello mono">
+      <img src="/images/avatar.jpg" alt="Shahid Khan" width="56" height="56" />
+      <span>salaam</span>
+    </p>
+    <h1>I'm Shahid. I write software, run a <a href="https://dawloom.com">company</a> with my brother, and study AI.</h1>
+    <p>
+      I have been coding since 8th standard. Today I run <a href="https://dawloom.com"><strong>Dawloom</strong></a>, where we build AI, web, mobile and
+      desktop software for clients around the world. I am also a BS Artificial Intelligence student, so my mornings are
+      in lecture halls and my evenings are in code.
+    </p>
+    <p class="muted">
+      This is my own quiet corner of the internet.
+    </p>
+  </section>
+
+  <section>
+    <SectionHead n="00" title="Now" id="now" />
+    <dl class="now">
+      <dt class="mono">work</dt>
+      <dd>
+        Running <a href="https://dawloom.com">Dawloom</a>. Since 2020 I have shipped more than 300 websites, apps and AI integrations. Most of that work
+        now happens there.
+      </dd>
+      <dt class="mono">study</dt>
+      <dd>
+        BS in Artificial Intelligence. I record my classes and share the notes here, so my group has everything in one
+        place.
+      </dd>
+      <dt class="mono">side</dt>
+      <dd>
+        <a href="https://ludo.shahidkhan.dev">Ludo 3D</a>, a browser game you can play with friends, and a
+        <a href="/cpp-ide/">C++ IDE for Android</a> so my students can code on their phones.
+      </dd>
+    </dl>
+    <p class="mono updated">updated september 2026</p>
+  </section>
+
+  <section>
+    <SectionHead n="01" title="Writing" id="writing" />
+    <PostList posts={posts} />
+    <p class="mono more"><a href="/posts/">all writing</a> · <a href="/index.xml">rss</a></p>
+  </section>
+
+  <section>
+    <SectionHead n="02" title="Things I made" id="made" />
+    <a class="feature" href="https://ludo.shahidkhan.dev">
+      <img
+        src="/images/ludo.webp"
+        alt="The Ludo 3D home screen: a 3D board on a table in a garden, with Play, With bots, Online, Tournament and Snakes & Ladders buttons."
+        width="1200"
+        height="750"
+        loading="lazy"
+      />
+      <span class="feature-text">
+        <span class="feature-title">Ludo 3D <span class="mono arrow">ludo.shahidkhan.dev ↗</span></span>
+        <span class="muted">
+          Ludo on a 3D board, right in the browser. Play bots or pass the phone, go online with friends, or run a
+          best-of-3 tournament. Snakes & Ladders is in there too. Made with Rahib Khan.
+        </span>
+      </span>
+    </a>
+    <ul class="made">
+      <li>
+        <a href="/cpp-ide/">C++ IDE for Android</a>
+        <span class="muted">Write, compile, run and debug C++ on a phone. Built for my students.</span>
+      </li>
+      <li>
+        <a href="https://dawloom.com">Dawloom</a>
+        <span class="muted">A software company I run with my brother. AI, web, mobile and desktop work.</span>
+      </li>
+      <li>
+        <a href="/subjects/">This class notebook</a>
+        <span class="muted">Recordings, notes and slides from every lecture, for my classmates.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <SectionHead n="03" title="Class notes" id="class" />
+    <p>
+      I study in Group 1 of the BS(AI) program. After a lecture I upload the recording, the teacher's notes and the
+      slides, so no one falls behind.
+    </p>
+    <p class="mono more"><a href="/subjects/">open the class notebook</a></p>
+  </section>
+
+  <section>
+    <SectionHead n="04" title="Say hi" id="hi" />
+    <p>
+      Email is the best way to reach me: <a href={LINKS.email}>{SITE.email}</a>. For quick questions, message me on
+      <a href={LINKS.whatsapp}>WhatsApp</a>. I also post on <a href={LINKS.x}>X</a> and keep code on
+      <a href={LINKS.github}>GitHub</a>.
+    </p>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    padding-top: 3rem;
+  }
+
+  .hello {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.6rem;
+    color: var(--muted);
+  }
+
+  .hello img {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  .intro h1 {
+    font-size: clamp(1.9rem, 1.4rem + 2.2vw, 2.6rem);
+    line-height: 1.15;
+    margin-bottom: 1.4rem;
+  }
+
+  .now {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 0.9rem 1rem;
+    margin: 0;
+  }
+
+  .now dt {
+    padding-top: 0.35rem;
+    color: var(--faint);
+  }
+
+  .now dd {
+    margin: 0;
+  }
+
+  .updated {
+    margin-top: 1.2rem;
+    color: var(--faint);
+  }
+
+  .more {
+    margin-top: 1.1rem;
+    color: var(--faint);
+  }
+
+  .feature {
+    display: block;
+    margin-bottom: 1.2rem;
+    text-decoration: none;
+  }
+
+  .feature img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    transition: transform 240ms var(--ease-out);
+  }
+
+  .feature:active img {
+    transform: scale(0.99);
+  }
+
+  .feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-top: 0.8rem;
+  }
+
+  .feature-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.2rem 1rem;
+    font-size: 1.25rem;
+    transition: color 160ms ease;
+  }
+
+  .arrow {
+    color: var(--faint);
+  }
+
+  .feature .muted {
+    font-size: 1rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .feature:hover .feature-title {
+      color: var(--accent);
+    }
+  }
+
+  .made {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .made li {
+    display: flex;
+    flex-direction: column;
+    padding: 0.55rem 0;
+  }
+
+  .made .muted {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 30rem) {
+    .now {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+    .now dd {
+      margin-bottom: 0.8rem;
+    }
+  }
+</style>

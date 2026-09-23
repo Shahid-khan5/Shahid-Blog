@@ -1,0 +1,64 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '../consts';
+
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+}
+const { posts } = Astro.props;
+---
+
+<ol class="posts">
+  {
+    posts.map((post) => (
+      <li>
+        <a href={`/posts/${post.id}/`}>
+          <span class="title">{post.data.title}</span>
+          <time class="mono" datetime={isoDate(post.data.date)}>
+            {formatDate(post.data.date)}
+          </time>
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .posts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 0.55rem 0;
+    text-decoration: none;
+  }
+
+  .title {
+    transition: color 160ms ease;
+  }
+
+  time {
+    flex: none;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover .title {
+      color: var(--accent);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    a {
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+  }
+</style>

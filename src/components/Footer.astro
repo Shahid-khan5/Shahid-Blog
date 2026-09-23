@@ -1,0 +1,54 @@
+---
+import { LINKS } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="wrap mono">
+  <nav aria-label="Site">
+    <a href="/">home</a>
+    <a href="/posts/">writing</a>
+    <a href="/subjects/">class notes</a>
+    <a href="/cv/">cv</a>
+    <a href="/contact/">contact</a>
+    <a href="/index.xml">rss</a>
+  </nav>
+  <nav aria-label="Elsewhere">
+    <a href={LINKS.github}>github</a>
+    <a href={LINKS.x}>x</a>
+    <a href={LINKS.email}>email</a>
+  </nav>
+  <p>
+    © {year} Shahid Khan. No cookies, no tracking. Made with <a href="https://astro.build">Astro</a>.
+  </p>
+</footer>
+
+<style>
+  footer {
+    margin-top: 6rem;
+    padding-block: 2rem 3rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover {
+      color: var(--ink);
+    }
+  }
+
+  p {
+    margin: 1.2rem 0 0;
+    color: var(--faint);
+  }
+</style>

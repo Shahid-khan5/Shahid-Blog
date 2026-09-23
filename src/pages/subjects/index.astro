@@ -1,0 +1,160 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { timetable } from '../../data/timetable';
+
+const subjects = await getCollection('subjects');
+const classes = await getCollection('classes');
+const titles = new Map(subjects.map((s) => [s.id, s.data.title]));
+const countFor = (id: string) => classes.filter((c) => c.id.startsWith(`${id}/`)).length;
+---
+
+<Base title="Class notes" description="Lecture recordings, notes and slides from BS(AI) Group 1.">
+  <header class="page-head">
+    <p class="mono muted">class notes</p>
+    <h1>BS(AI), Group 1</h1>
+    <p class="muted">
+      Recordings, the teacher's notes and slides from each lecture. Open a subject to see every class.
+    </p>
+  </header>
+
+  <SectionHead n="01" title="Subjects" />
+  <ul class="subjects">
+    {
+      subjects.map((s) => (
+        <li>
+          <a href={`/subjects/${s.id}/`}>
+            <span class="mono code">{s.data.subject_code}</span>
+            <span class="name">{s.data.title}</span>
+            <span class="mono meta">
+              {s.data.professor} · {countFor(s.id)} {countFor(s.id) === 1 ? 'class' : 'classes'}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <SectionHead n="02" title="Weekly timetable" />
+  <p class="mono muted note">Fall 2025 schedule. Today's day is marked.</p>
+  <div class="days" data-days>
+    {
+      timetable.map(({ day, slots }) => (
+        <section class="day" data-day={day}>
+          <h3 class="mono">{day.toLowerCase()}</h3>
+          <ul>
+            {slots.map((s) => (
+              <li>
+                <span class="mono time">{s.time}</span>
+                <a href={`/subjects/${s.subject}/`}>{titles.get(s.subject)}</a>
+                <span class="mono room">{s.room}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<script is:inline>
+  (() => {
+    const day = new Intl.DateTimeFormat('en-US', { weekday: 'long', timeZone: 'Asia/Karachi' }).format(new Date());
+    document.querySelector(`[data-days] [data-day="${day}"]`)?.setAttribute('data-today', '');
+  })();
+</script>
+
+<style>
+  .page-head {
+    padding-top: 3rem;
+  }
+
+  .subjects {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .subjects a {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0 1rem;
+    padding: 0.7rem 0;
+    text-decoration: none;
+  }
+
+  .code {
+    grid-row: span 2;
+    padding-top: 0.35rem;
+    color: var(--accent);
+  }
+
+  .name {
+    transition: color 160ms ease;
+  }
+
+  .meta {
+    color: var(--faint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .subjects a:hover .name {
+      color: var(--accent);
+    }
+  }
+
+  .note {
+    margin-top: -0.4rem;
+  }
+
+  .day {
+    position: relative;
+    padding: 0.2rem 0 0.8rem;
+  }
+
+  .day h3 {
+    margin: 1rem 0 0.3rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .day[data-today] h3 {
+    color: var(--accent);
+  }
+
+  .day[data-today] h3::after {
+    content: ' · today';
+  }
+
+  .day ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .day li {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr auto;
+    gap: 0.8rem;
+    align-items: baseline;
+    padding: 0.25rem 0;
+    font-size: 1rem;
+  }
+
+  .time,
+  .room {
+    color: var(--faint);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 34rem) {
+    .day li {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 0.4rem 0;
+    }
+  }
+</style>

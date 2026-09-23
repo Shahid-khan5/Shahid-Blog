@@ -1,0 +1,30 @@
+---
+interface Props {
+  n: string;
+  title: string;
+  id?: string;
+}
+const { n, title, id } = Astro.props;
+---
+
+<h2 class="section-head" id={id}>
+  <span class="n mono">{n}</span>
+  <span class="t">{title}</span>
+</h2>
+
+<style>
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin: 4.5rem 0 1.2rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 1.25rem;
+  }
+
+  .n {
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+</style>

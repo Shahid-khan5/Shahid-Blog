@@ -1,17 +1,29 @@
-# Shahid Khan's Personal Website & Blog
+# shahidkhan.dev
 
-Welcome to [shahidkhan.dev](https://shahidkhan.dev), my personal website and blog where I share my journey as a .NET AI Developer and Co-Founder of Dawloom. This site showcases my projects, technical writings, and university coursework.
+My personal site and blog. Built with [Astro](https://astro.build) and hosted on Vercel.
 
-- **Static Site Generation**: Built with [Hugo](https://gohugo.io/) for speed and flexibility.
-- **Search Functionality**: Implemented using [Lunr.js](https://lunrjs.com).
-- **Illustrations**: I create all the illustrations and comics in my articles on my iPad.
-- **IndieWeb Integration**: I've implemented [microformats2](https://microformats.org/wiki/Main_Page) markup, making the site compatible with social readers and other IndieWeb sites.
+The site follows my clock in Pakistan. From 6 pm to 6 am the lamp is on (dark). In the day it is paper (light). Visitors can flip the lamp from the header or with <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>K</kbd>.
+
+## Run it
+
+```sh
+pnpm install
+pnpm dev      # http://localhost:4321
+pnpm build    # type check, then build to dist/
+```
+
+## Where things live
+
+| Path | What |
+| --- | --- |
+| `src/content/posts/` | Blog posts. Set `slug` to control the URL. |
+| `src/content/pages/` | Standalone pages: `/cv/`, `/contact/`, `/cpp-ide/` and its privacy pages. |
+| `src/content/subjects/` | One file per university subject. |
+| `src/content/classes/<subject>/` | One file per class, with video, audio, image and file links. |
+| `src/data/timetable.ts` | Weekly class schedule. |
+| `src/pages/index.astro` | Home page, including the "Now" section. |
+| `src/styles/global.css` | Colours for both lamp modes, type and motion. |
 
 ## License
 
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />
-This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
-
----
-
-<sub>There may or may not be secret pages and easter eggs on the site.</sub>
+Writing is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

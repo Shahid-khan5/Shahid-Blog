@@ -1,0 +1,369 @@
+/*
+  The site has two moods that follow the clock in Pakistan.
+  Day: warm paper. Night: a dark room with a desk lamp on.
+  <html data-lamp="on"> is night. The visitor can flip it.
+*/
+
+:root {
+  --bg: #f3eee4;
+  --bg-raised: #ebe4d7;
+  --ink: #221d17;
+  --muted: #6d6456;
+  --faint: #9a907f;
+  --line: #d9cfbe;
+  --accent: #a4461f;
+  --glow: transparent;
+  --grain-opacity: 0.07;
+  --selection: #f0cf9c;
+
+  --serif: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --measure: 38rem;
+  --gutter: 1.25rem;
+
+  color-scheme: light;
+}
+
+:root[data-lamp='on'] {
+  --bg: #13110e;
+  --bg-raised: #1c1914;
+  --ink: #ebe3d4;
+  --muted: #a39884;
+  --faint: #6f6657;
+  --line: #2e2922;
+  --accent: #eaa45a;
+  --glow: rgba(255, 176, 92, 0.13);
+  --grain-opacity: 0.045;
+  --selection: #5a3d1c;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.1875rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 400ms ease, color 400ms ease;
+}
+
+/* The lamp: a soft warm light from the top left, only at night. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(60rem 40rem at 12% -8%, var(--glow), transparent 70%);
+}
+
+/* Paper grain, so the page does not feel like a flat screen. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--selection);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: calc(var(--measure) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Type */
+
+h1,
+h2,
+h3 {
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2rem, 1.5rem + 2.4vw, 2.75rem);
+  margin: 0 0 0.5em;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin: 2.2em 0 0.6em;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin: 1.8em 0 0.4em;
+}
+
+p,
+ul,
+ol,
+blockquote,
+table,
+pre {
+  margin: 0 0 1.1em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 160ms ease, color 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    text-decoration-color: var(--accent);
+  }
+}
+
+strong {
+  font-weight: 600;
+}
+
+hr {
+  border: 0;
+  margin: 2.5em auto;
+  width: 100%;
+  text-align: center;
+  overflow: visible;
+  color: var(--faint);
+}
+
+/* Section break as three small marks, like in a notebook. */
+hr::after {
+  content: '· · ·';
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+}
+
+blockquote {
+  margin-inline: 0;
+  padding-left: 1.1em;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font-style: italic;
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--mono);
+  font-size: 0.8em;
+}
+
+:not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--bg-raised);
+}
+
+pre {
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg-raised);
+  line-height: 1.5;
+}
+
+kbd {
+  display: inline-block;
+  padding: 0.05em 0.4em;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  line-height: 1.4;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+th,
+td {
+  padding: 0.5em 0.75em 0.5em 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: lowercase;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+/* Small helpers */
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Pressable things give a little under the finger. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.7em 1.3em;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease;
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+}
+
+/* Long-form text from Markdown */
+
+.prose {
+  margin-top: 2.5rem;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose li {
+  margin-bottom: 0.35em;
+}
+
+.prose li::marker {
+  color: var(--faint);
+}
+
+.prose h2 {
+  padding-top: 0.2em;
+}
+
+/* Page entry: content rises in, one block after another. */
+
+.rise > * {
+  animation: rise 520ms var(--ease-out) both;
+}
+
+.rise > :nth-child(2) { animation-delay: 50ms; }
+.rise > :nth-child(3) { animation-delay: 100ms; }
+.rise > :nth-child(4) { animation-delay: 150ms; }
+.rise > :nth-child(5) { animation-delay: 200ms; }
+.rise > :nth-child(6) { animation-delay: 250ms; }
+.rise > :nth-child(n + 7) { animation-delay: 300ms; }
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise > * {
+    animation-name: fade;
+    animation-duration: 200ms;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  body {
+    transition: none;
+  }
+}
+
+/* Class notes often start with their own title. Keep it from shouting. */
+.prose h1 {
+  font-size: 1.6rem;
+  margin: 0 0 0.6em;
+}

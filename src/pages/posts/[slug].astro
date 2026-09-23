@@ -1,0 +1,61 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { formatDate, isoDate } from '../../consts';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const text = post.body ?? '';
+const minutes = Math.max(1, Math.round(text.split(/\s+/).length / 220));
+---
+
+<Base title={post.data.title} description={post.data.description} article={{ published: post.data.date }}>
+  <article>
+    <header class="post-head">
+      <p class="mono muted">
+        <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        <span aria-hidden="true"> · </span>
+        {minutes} min read
+      </p>
+      <h1>{post.data.title}</h1>
+      <p class="dek">{post.data.description}</p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <footer class="post-foot mono muted">
+      <p>
+        Thanks for reading. If this was useful, <a href="/contact/">tell me</a>.
+      </p>
+      <p><a href="/posts/">← more writing</a></p>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .post-head {
+    padding-top: 3rem;
+  }
+
+  .dek {
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .post-foot {
+    margin-top: 4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .post-foot p {
+    margin: 0 0 0.5rem;
+  }
+</style>

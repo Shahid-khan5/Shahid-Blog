@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Base title="Writing" description="Essays and notes by Shahid Khan.">
+  <header class="page-head">
+    <p class="mono muted">writing</p>
+    <h1>Things I wrote down</h1>
+    <p class="muted">Honest notes on building software, running a company and being a student at the same time.</p>
+  </header>
+  <PostList posts={posts} />
+</Base>
+
+<style>
+  .page-head {
+    padding-top: 3rem;
+    margin-bottom: 2.5rem;
+  }
+</style>

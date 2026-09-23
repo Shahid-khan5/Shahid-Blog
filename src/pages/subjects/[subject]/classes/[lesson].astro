@@ -1,0 +1,181 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../../layouts/Base.astro';
+import SectionHead from '../../../../components/SectionHead.astro';
+import FileList from '../../../../components/FileList.astro';
+import { isoDate } from '../../../../consts';
+
+export const getStaticPaths = (async () => {
+  const subjects = new Map((await getCollection('subjects')).map((s) => [s.id, s]));
+  const classes = await getCollection('classes');
+  return classes.map((lesson) => {
+    const [subject, slug] = lesson.id.split('/');
+    return { params: { subject, lesson: slug }, props: { lesson, subject: subjects.get(subject)! } };
+  });
+}) satisfies GetStaticPaths;
+
+const { lesson, subject } = Astro.props;
+const { Content } = await render(lesson);
+const d = lesson.data;
+const when = d.date.toLocaleDateString('en-GB', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
+// Number the sections that exist, in order.
+let n = 0;
+const next = () => String(++n).padStart(2, '0');
+---
+
+<Base title={`${d.title} · ${subject.data.title}`} description={`${subject.data.title} class on ${when}.`}>
+  <header class="page-head">
+    <p class="mono muted">
+      <a href="/subjects/">class notes</a> / <a href={`/subjects/${subject.id}/`}>{subject.data.title.toLowerCase()}</a>
+    </p>
+    <h1>{d.title}</h1>
+    <p class="mono muted">
+      <time datetime={isoDate(d.date)}>{when}</time>
+      {d.classTime && <span> · {d.classTime}</span>}
+      {d.location && <span> · {d.location}</span>}
+    </p>
+    {
+      d.topics.length > 0 && (
+        <ul class="topics">
+          {d.topics.map((t) => (
+            <li class="mono">{t}</li>
+          ))}
+        </ul>
+      )
+    }
+  </header>
+
+  {
+    d.videos.length > 0 && (
+      <section>
+        <SectionHead n={next()} title="Videos" />
+        {d.videos.map((v) => (
+          <figure class="media">
+            <video controls preload="metadata" src={v.url} />
+            <figcaption>
+              {v.title}
+              {v.duration && <span class="mono muted"> · {v.duration}</span>}
+            </figcaption>
+          </figure>
+        ))}
+      </section>
+    )
+  }
+
+  {
+    d.audio.length > 0 && (
+      <section>
+        <SectionHead n={next()} title="Lecture audio" />
+        {d.audio.map((a) => (
+          <figure class="media">
+            <figcaption>{a.title}</figcaption>
+            <audio controls preload="none" src={a.url} />
+          </figure>
+        ))}
+      </section>
+    )
+  }
+
+  {
+    d.images.length > 0 && (
+      <section>
+        <SectionHead n={next()} title="Notes and photos" />
+        <div class="images">
+          {d.images.map((img) => (
+            <a href={img.url} target="_blank" rel="noopener noreferrer">
+              <img src={img.url} alt={img.caption ?? 'Class notes'} loading="lazy" />
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.documents.length > 0 && (
+      <section>
+        <SectionHead n={next()} title="Files" />
+        <FileList files={d.documents} />
+      </section>
+    )
+  }
+
+  <section>
+    <SectionHead n={next()} title="Notes" />
+    <div class="prose notes"><Content /></div>
+  </section>
+
+  <p class="mono back"><a href={`/subjects/${subject.id}/`}>← all {subject.data.title} classes</a></p>
+</Base>
+
+<style>
+  .page-head {
+    padding-top: 3rem;
+  }
+
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+
+  .topics li {
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  .media {
+    margin: 0 0 1.6rem;
+  }
+
+  .media video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+  }
+
+  .media audio {
+    width: 100%;
+  }
+
+  figcaption {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+  }
+
+  .images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.6rem;
+  }
+
+  .images img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+  }
+
+  .notes {
+    margin-top: 0;
+  }
+
+  .back {
+    margin-top: 3rem;
+  }
+</style>

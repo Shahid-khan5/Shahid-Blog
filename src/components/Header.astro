@@ -1,0 +1,154 @@
+---
+import { SITE } from '../consts';
+---
+
+<header class="top wrap mono">
+  <a href="/" class="home">shahid khan</a>
+  <div class="right">
+    <span class="clock" data-clock hidden></span>
+    <button type="button" class="lamp" data-lamp-toggle aria-label="Toggle the lamp">
+      <span class="bulb" aria-hidden="true"></span>
+      <span class="lamp-label">lamp</span>
+    </button>
+    <button type="button" class="menu" data-menu-open aria-label="Open menu">
+      <span class="menu-touch">menu</span>
+      <kbd class="menu-keys">ctrl k</kbd>
+    </button>
+  </div>
+</header>
+
+<script define:vars={{ timeZone: SITE.timeZone, place: SITE.place }} is:inline>
+  // Live clock: the time where Shahid is.
+  const clock = document.querySelector('[data-clock]');
+  const fmt = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone });
+  const tick = () => {
+    clock.innerHTML = `${fmt.format(new Date()).toLowerCase()}<span class="where"> in ${place}</span>`;
+    clock.hidden = false;
+  };
+  tick();
+  setInterval(tick, 20_000);
+
+  if (/Mac|iPhone|iPad/.test(navigator.platform)) {
+    document.querySelector('.menu-keys').textContent = '⌘ k';
+  }
+</script>
+
+<script>
+  const root = document.documentElement;
+  const toggle = document.querySelector<HTMLButtonElement>('[data-lamp-toggle]')!;
+
+  const sync = () => {
+    const on = root.dataset.lamp === 'on';
+    toggle.setAttribute('aria-pressed', String(on));
+    toggle.title = on ? 'Turn the lamp off' : 'Turn the lamp on';
+  };
+
+  const flip = () => {
+    root.dataset.lamp = root.dataset.lamp === 'on' ? 'off' : 'on';
+    try {
+      sessionStorage.setItem('lamp', root.dataset.lamp);
+    } catch {}
+    sync();
+  };
+
+  toggle.addEventListener('click', flip);
+  document.addEventListener('lamp:toggle', flip);
+  sync();
+</script>
+
+<style>
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.5rem;
+    color: var(--muted);
+  }
+
+  .home,
+  .right {
+    white-space: nowrap;
+  }
+
+  .home {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .clock {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.3em 0.1em;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: transform 160ms var(--ease-out), color 160ms ease;
+  }
+
+  button:active {
+    transform: scale(0.96);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    button:hover {
+      color: var(--ink);
+    }
+  }
+
+  .bulb {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    transition: background-color 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
+  }
+
+  :global([data-lamp='on']) .bulb {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px 2px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  .menu kbd {
+    font-size: 0.75rem;
+  }
+
+  .menu-touch {
+    display: none;
+  }
+
+  @media (hover: none) {
+    .menu-keys {
+      display: none;
+    }
+    .menu-touch {
+      display: inline;
+    }
+  }
+
+  @media (max-width: 26rem) {
+    .lamp-label,
+    .clock :global(.where) {
+      display: none;
+    }
+    .right {
+      gap: 0.7rem;
+    }
+  }
+</style>
