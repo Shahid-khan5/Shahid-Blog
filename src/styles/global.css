@@ -325,6 +325,14 @@ th {
   padding-top: 0.2em;
 }
 
+.prose .cv-photo {
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--line);
+  margin-bottom: 1.2rem;
+}
+
 /* Page entry: content rises in, one block after another. */
 
 .rise > * {
